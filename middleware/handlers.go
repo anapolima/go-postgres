@@ -229,3 +229,34 @@ func insertUser (user models.User) int64 {
     // return the inserted id
     return id
 }
+
+// get a single user from the database
+func getUser (id int64) (models.User, error) {
+	db := createConnection()
+
+	defer db.Close()
+
+	var user models.User
+
+	// create the select sql query
+	sqlStatement := `SELECT * FROM users WHERE userid=$1`
+
+	// execute the sql statement
+	row := db.QueryRow(sqlStatement, id)
+
+	// unmarshal the row object to user
+    err := row.Scan(&user.ID, &user.Name, &user.Age, &user.Location)
+
+	switch err {
+    case sql.ErrNoRows:
+        fmt.Println("No rows were returned!")
+        return user, nil
+    case nil:
+        return user, nil
+    default:
+        log.Fatalf("Unable to scan the row. %v", err)
+    }
+
+    // return empty user on error
+    return user, err
+}
