@@ -326,3 +326,31 @@ func updateUser(id int64, user models.User) int64 {
 
 	return rowsAffected
 }
+
+// delete user from the database
+func deleteUser(id int64) int64 {
+	db := createConnection()
+
+	defer db.Close()
+
+	// create the delete sql query
+	sqlStatement := `DELETE FROM users WHERE userid=$1`
+
+	// execute the sql statement
+	res, err := db.Exec(sqlStatement, id)
+
+	if err != nil {
+		log.Fatalf("Unable to execute the query. %v", err)
+	}
+
+	// check how many rows affected
+	rowsAffected, err := res.RowsAffected()
+
+	if err != nil {
+		log.Fatalf("Error while checking the affected rows. %v", err)
+	}
+
+	fmt.Printf("Total rows/record affected %v", rowsAffected)
+
+	return rowsAffected
+}
