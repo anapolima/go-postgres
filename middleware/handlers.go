@@ -123,3 +123,46 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(users)
 }
+
+// UpdateUser pdate user's detail in the postgres db
+func UpdateUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "PUT")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+	// get the userid from the request params, the key is "id"
+	params := mux.Vars(r)
+
+	// convert the id type from string to int
+	id, err := strconv.Atoi(params["id"])
+
+	if err != nil {
+		log.Fatalf("Unable to convert the string into int. %v", err)
+	}
+
+	// create an empty user
+	var user models.User
+
+	// decode the json request to user
+	err = json.NewDecoder(r.Body).Decode(user)
+
+	if err != nil {
+		log.Fatalf("Unable to decode the request body. %v", err)
+	}
+
+	// call the updateUser to update the user
+	updatedRows := updateUser(int64(id), user)
+
+	// format the message string
+	msg := fmt.Sprintf("User updated successfully. Total rows/record affected %v", updatedRows)
+
+	// format the response message
+	res := response{
+		ID:      int64(id),
+		Message: msg,
+	}
+
+	// send the response
+	json.NewEncoder(w).Encode(res)
+}
