@@ -198,3 +198,34 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	// send the response
 	json.NewEncoder(w).Encode(res)
 }
+
+// ------------------------------------- handler functions
+
+// insert one user into the database
+func insertUser (user models.User) int64 {
+	// create the postgres db connection
+	db := createConnection()
+
+	// close the db connection
+	defer db.Close()
+
+	// create the insert sql query
+    // returning userid will return the id of the inserted user
+    sqlStatement := `INSERT INTO users (name, location, age) VALUES ($1, $2, $3) RETURNING userid`
+
+	// the inserted id will store in this id
+	var id int64
+
+	// execute the sql statement
+	// Scan function will save the insert id in the id
+	err := db.QueryRow(sqlStatement, user.Name, user.Location, user.Age).Scan(&id)
+	
+	if err != nil {
+		log.Fatalf("Unable to execute the query. %v", err)
+	}
+
+	fmt.Printf("Inserted a single record %v", id)
+
+    // return the inserted id
+    return id
+}
