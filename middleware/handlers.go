@@ -144,7 +144,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 
 	// decode the json request to user
-	err = json.NewDecoder(r.Body).Decode(user)
+	err = json.NewDecoder(r.Body).Decode(&user)
 
 	if err != nil {
 		log.Fatalf("Unable to decode the request body. %v", err)
