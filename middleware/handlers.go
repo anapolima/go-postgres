@@ -285,16 +285,16 @@ func getAllUsers() ([]models.User, error) {
 		var user models.User
 
 		// unmarshal the row object to user
-        err = rows.Scan(&user.ID, &user.Name, &user.Age, &user.Location)
+		err = rows.Scan(&user.ID, &user.Name, &user.Age, &user.Location)
 
 		if err != nil {
-            log.Fatalf("Unable to scan the row. %v", err)
-        }
+			log.Fatalf("Unable to scan the row. %v", err)
+		}
 
-        // append the user in the users slice
-        users = append(users, user)
+		// append the user in the users slice
+		users = append(users, user)
 	}
 
 	// return empty user on error
-    return users, err
+	return users, err
 }
