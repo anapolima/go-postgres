@@ -2,16 +2,16 @@ package middleware
 
 import (
 	"database/sql"
-	"encoding/json"      // "encoding/json" // package to encode and decode the json into struct and vice versa
-	"fmt"                // "github.com/gorilla/mux" // used to get the params from the route
-	"go-postgres/models" // models package where User schema is defined
+	"encoding/json" // "encoding/json" // package to encode and decode the json into struct and vice versa
+	"fmt"
+	"github.com/gorilla/mux"   // "github.com/gorilla/mux" // used to get the params from the route
+	"github.com/joho/godotenv" // package used to read the .env file
+	_ "github.com/lib/pq"      // postgres golang driver
+	"go-postgres/models"       // models package where User schema is defined
 	"log"
 	"net/http" // used to access the request and response object of the api
 	"os"       // used to read the environment variable
-
-	"github.com/joho/godotenv" // package used to read the .env file
-	_ "github.com/lib/pq"      // postgres golang driver
-	// "strconv" // package used to covert string into int type
+	"strconv"  // "strconv" // package used to covert string into int type
 )
 
 // response format
@@ -79,4 +79,31 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	// send the response
 	json.NewEncoder(w).Encode(res)
+}
+
+// GetUser will return a single user by its id
+func GetUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	// get the userid from the request params, key is "id"
+	params := mux.Vars(r)
+
+	// convert the d type from string to int
+	id, err := strconv.Atoi(params["id"])
+
+	if err != nil {
+		log.Fatalf("Unable to convert the string into int. %v", err)
+	}
+
+	// call the getUser functionwith user id to retrieve a single user
+
+	user, err := getUser(int64(id))
+
+	if err != nil {
+		log.Fatalf("Unable to get user. %v", err)
+	}
+
+	// send the response
+	json.NewEncoder(w).Encode(user)
 }
