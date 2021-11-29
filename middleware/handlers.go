@@ -260,3 +260,41 @@ func getUser(id int64) (models.User, error) {
 	// return empty user on error
 	return user, err
 }
+
+// get all users from the database
+func getAllUsers() ([]models.User, error) {
+	db := createConnection()
+
+	defer db.Close()
+
+	var users []models.User
+
+	sqlStatement := "SELECT * FROM users"
+
+	rows, err := db.Query(sqlStatement)
+
+	if err != nil {
+		log.Fatalf("Unable to execute the query. %v", err)
+	}
+
+	// close the statement
+	defer rows.Close()
+
+	// iterate over the rows
+	for rows.Next() {
+		var user models.User
+
+		// unmarshal the row object to user
+        err = rows.Scan(&user.ID, &user.Name, &user.Age, &user.Location)
+
+		if err != nil {
+            log.Fatalf("Unable to scan the row. %v", err)
+        }
+
+        // append the user in the users slice
+        users = append(users, user)
+	}
+
+	// return empty user on error
+    return users, err
+}
