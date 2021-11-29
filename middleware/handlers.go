@@ -202,7 +202,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 // ------------------------------------- handler functions
 
 // insert one user into the database
-func insertUser (user models.User) int64 {
+func insertUser(user models.User) int64 {
 	// create the postgres db connection
 	db := createConnection()
 
@@ -210,8 +210,8 @@ func insertUser (user models.User) int64 {
 	defer db.Close()
 
 	// create the insert sql query
-    // returning userid will return the id of the inserted user
-    sqlStatement := `INSERT INTO users (name, location, age) VALUES ($1, $2, $3) RETURNING userid`
+	// returning userid will return the id of the inserted user
+	sqlStatement := `INSERT INTO users (name, location, age) VALUES ($1, $2, $3) RETURNING userid`
 
 	// the inserted id will store in this id
 	var id int64
@@ -219,19 +219,19 @@ func insertUser (user models.User) int64 {
 	// execute the sql statement
 	// Scan function will save the insert id in the id
 	err := db.QueryRow(sqlStatement, user.Name, user.Location, user.Age).Scan(&id)
-	
+
 	if err != nil {
 		log.Fatalf("Unable to execute the query. %v", err)
 	}
 
 	fmt.Printf("Inserted a single record %v", id)
 
-    // return the inserted id
-    return id
+	// return the inserted id
+	return id
 }
 
 // get a single user from the database
-func getUser (id int64) (models.User, error) {
+func getUser(id int64) (models.User, error) {
 	db := createConnection()
 
 	defer db.Close()
@@ -245,18 +245,18 @@ func getUser (id int64) (models.User, error) {
 	row := db.QueryRow(sqlStatement, id)
 
 	// unmarshal the row object to user
-    err := row.Scan(&user.ID, &user.Name, &user.Age, &user.Location)
+	err := row.Scan(&user.ID, &user.Name, &user.Age, &user.Location)
 
 	switch err {
-    case sql.ErrNoRows:
-        fmt.Println("No rows were returned!")
-        return user, nil
-    case nil:
-        return user, nil
-    default:
-        log.Fatalf("Unable to scan the row. %v", err)
-    }
+	case sql.ErrNoRows:
+		fmt.Println("No rows were returned!")
+		return user, nil
+	case nil:
+		return user, nil
+	default:
+		log.Fatalf("Unable to scan the row. %v", err)
+	}
 
-    // return empty user on error
-    return user, err
+	// return empty user on error
+	return user, err
 }
