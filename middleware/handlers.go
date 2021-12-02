@@ -30,8 +30,15 @@ func createConnection() *sql.DB {
 		log.Fatal("Error loading .env file")
 	}
 
+	url := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_NAME"))
+
 	// open the connection
-	db, err := sql.Open("postgres", os.Getenv("POSTGRES_URL"))
+	db, err := sql.Open("postgres", url)
 
 	if err != nil {
 		panic(err)
