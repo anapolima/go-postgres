@@ -2,12 +2,14 @@ package main
 
 import (
     "fmt"
+    "go-postgres/models"
     "go-postgres/router"
     "log"
     "net/http"
 )
 
 func main() {
+    models.CreateTableUsers()
     r := router.Router()
     // fs := http.FileServer(http.Dir("build"))
     // http.Handle("/", fs)
