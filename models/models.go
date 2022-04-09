@@ -43,7 +43,7 @@ func CreateTableUsers() {
 	errPing := db.Ping()
 
 	if errPing != nil {
-		panic(err)
+		panic(errPing)
 	}
 
 	sqlStatement := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS public.users (
